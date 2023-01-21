@@ -1,0 +1,5 @@
+[plugin]
+; general plugin activation option ['true' or 'false']
+active = true
+; absolut path to .eventcache file of EventManager. Needs to be adapted for your concrete setup. Shall end with '/'
+eventcache_path = 

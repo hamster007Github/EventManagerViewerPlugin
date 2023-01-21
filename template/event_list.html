@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block header %}
+<style>
+    code {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: 'Courier New';
+    line-height: 1.6;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+{% if not pub %}
+<script>
+function sortTable(tablename, n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById(tablename);
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if not pub %}
+<br />
+<h2>EventManagerViewer Plugin - Event list</h2>
+<br />
+Status: {{eventManagerStatus}} | Last update: {{last_update}}
+<br />
+<h3>All events:</h3>
+<table id=ew_eventtable border="1">
+  <tr>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 0)">Name</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 1)">Type</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 2)">start*</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 3)">end*</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 4)">has spawnpoints</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 5)">has quests</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 6)">has pokemon</th>
+    <th style="text-align:left" onclick="sortTable('ew_eventtable', 7)">bonus lure duration</th>
+  </tr>
+  {% for eventelement in event_list %}
+  <tr>
+    <td>{{eventelement["name"]}}</td>
+    <td>{{eventelement["etype"]}}</td>
+    <td>{{eventelement["start"]}}</td>
+    <td>{{eventelement["end"]}}</td>
+    <td>{{eventelement["has_spawnpoints"]}}</td>
+    <td>{{eventelement["has_quests"]}}</td>
+    <td>{{eventelement["has_pokemon"]}}</td>
+    <td>{{eventelement["bonus_lure_duration"]}}</td>
+  </tr>
+  {% endfor %}
+</table>
+*=local times
+<br />
+<h3>Quest changing events:</h3>
+<table id=ew_questeventtable border="1">
+  <tr>
+    <th style="text-align:left" onclick="sortTable('ew_questeventtable', 0)">Name</th>
+    <th style="text-align:left" onclick="sortTable('ew_questeventtable', 1)">Type</th>
+    <th style="text-align:left" onclick="sortTable('ew_questeventtable', 2)">start*</th>
+    <th style="text-align:left" onclick="sortTable('ew_questeventtable', 3)">end*</th>
+  </tr>
+  {% for eventelement in quest_list %}
+  <tr>
+    <td>{{eventelement["name"]}}</td>
+    <td>{{eventelement["etype"]}}</td>
+    <td>{{eventelement["start"]}}</td>
+    <td>{{eventelement["end"]}}</td>
+  </tr>
+  {% endfor %}
+</table>
+*=local times
+{% endif %}
+
+{% endblock %}
